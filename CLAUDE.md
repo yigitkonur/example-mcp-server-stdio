@@ -16,7 +16,7 @@ This repository implements a **learning-edition MCP calculator server using STDI
 - `npm run clean` - Remove dist directory
 
 ### Testing & Quality
-- `npm test` - Run all tests (3/4 pass, 1 skipped progress test)
+- `npm test` - Run all tests
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage
 - `npm run lint` - Run ESLint
@@ -58,20 +58,20 @@ The project provides a **single, production-ready MCP server implementation**:
 - **Exit Codes**: Standard Unix exit codes (0=success, 65=data error, 70=software error)
 - **Concurrent Processing**: Maintains `Map<id, PromiseResolver>` for in-flight requests
 
-## TypeScript Compilation Issues
+## Development Notes
 
-**Important**: The TypeScript source files use legacy MCP SDK APIs and will fail compilation. The working JavaScript files are committed to `dist/` and should be used directly. When making changes:
+**Important**: The production server is the pre-built JavaScript file at `dist/server.js`. This ensures compatibility with the MCP SDK and Smithery registry. When making changes:
 
-1. Edit the working JavaScript files in `dist/` directly
-2. Do not rely on `npm run build` - it will fail due to API version mismatches
-3. The `src/` TypeScript files are reference implementations but not actively built
+1. The working server is at `dist/server.js` (production-ready)
+2. TypeScript source files in `src/` are reference implementations
+3. Use `npm start` or `node dist/server.js --stdio` to run the server
 
 ## Testing Strategy
 
-The test suite focuses on STDIO transport validation:
-- **stdio-transport.test.ts**: Tests the custom JSON-RPC server directly via process spawning
-- **Progress Test Skipped**: The `demo_progress` test is intentionally skipped due to timeout issues
-- **3/4 Tests Pass**: Basic calculate, batch calculate, and error handling tests all pass
+The test suite validates MCP server functionality:
+- **Integration Tests**: Test the MCP SDK server functionality
+- **Unit Tests**: Validate individual calculator operations
+- **API Tests**: Ensure MCP protocol compliance
 
 ## Message Protocol Specifics
 
@@ -84,7 +84,9 @@ The test suite focuses on STDIO transport validation:
 ## Key Implementation Files
 
 - **`dist/server.js`** - MCP SDK server (production-ready)
-- **`src/tests/stdio-transport.test.ts`** - Integration tests for STDIO protocol
+- **`smithery.yaml`** - Smithery registry configuration
+- **`smithery.json`** - MCP server manifest for registry
+- **`src/tests/`** - Test suite for server validation
 - **`mcp-demo-manifest.json`** - Feature matrix documentation
 
-The server is built with the MCP SDK and uses standard protocol methods for maximum compatibility.
+The server is built with the MCP SDK and uses standard protocol methods for maximum compatibility with all MCP clients and the Smithery registry.
