@@ -1,0 +1,53 @@
+{
+  "name": "calculator-learning-demo-stdio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Learning-edition MCP calculator server demonstrating STDIO transport",
+  "main": "./dist/server-stdio.js",
+  "types": "./dist/server.d.ts",
+  "bin": {
+    "calculator-stdio-server": "./dist/server-stdio.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsx --watch src/server-stdio.js",
+    "start": "node dist/server-stdio.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "test:integration": "npm run test -- --testPathPattern=integration",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "client": "tsx src/client.ts",
+    "inspector": "npx @modelcontextprotocol/inspector tsx src/server.ts --stdio",
+    "ci": "npm run lint && npm run typecheck && npm run test:coverage && npm run build",
+    "precommit": "lint-staged",
+    "prepush": "npm run ci",
+    "check": "npm run lint && npm run typecheck && npm run test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "globals": "^16.3.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.4",
+    "ts-jest": "^29.1.1",
+    "tsx": "^4.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

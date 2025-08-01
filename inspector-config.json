@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "calculator": {
+      "command": "node",
+      "args": ["src/test-server.js", "--stdio"]
+    }
+  }
+}
