@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "mcpVersion": "2024-11-05",
+  "name": "Calculator Learning Demo (STDIO)",
+  "description": "A comprehensive learning-edition MCP calculator server showcasing STDIO transport with educational features including batch operations, progress tracking, and mathematical problem solving",
+  "author": "MCP Examples Team",
+  "license": "MIT",
+  "homepage": "https://github.com/yigit/mcp-server-examples",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yigit/mcp-server-examples.git",
+    "directory": "stdio"
+  },
+  "bugs": {
+    "url": "https://github.com/yigit/mcp-server-examples/issues"
+  },
+  "keywords": [
+    "calculator",
+    "math",
+    "learning",
+    "education",
+    "stdio",
+    "demo",
+    "mcp",
+    "model-context-protocol",
+    "tools",
+    "batch-operations",
+    "progress-tracking"
+  ],
+  "categories": [
+    "productivity",
+    "education",
+    "development-tools"
+  ],
+  "transport": {
+    "type": "stdio"
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "calculate",
+        "description": "Perform basic arithmetic operations (add, subtract, multiply, divide, power, modulo)"
+      },
+      {
+        "name": "batch_calculate",
+        "description": "Perform multiple calculations in a single request with progress tracking"
+      },
+      {
+        "name": "advanced_calculate",
+        "description": "Advanced mathematical operations including trigonometry, logarithms, and more"
+      },
+      {
+        "name": "demo_progress",
+        "description": "Demonstrate progress notifications for long-running operations"
+      },
+      {
+        "name": "solve_math_problem",
+        "description": "Solve complex mathematical word problems with step-by-step explanations"
+      },
+      {
+        "name": "explain_formula",
+        "description": "Provide detailed explanations of mathematical formulas and concepts"
+      },
+      {
+        "name": "calculator_assistant",
+        "description": "Interactive calculator assistant for educational guidance"
+      }
+    ],
+    "resources": [
+      {
+        "name": "calculator://constants",
+        "description": "Mathematical constants like PI, E, and others"
+      },
+      {
+        "name": "calculator://stats",
+        "description": "Server usage statistics and performance metrics"
+      },
+      {
+        "name": "formulas://library",
+        "description": "Library of common mathematical formulas"
+      },
+      {
+        "name": "calculator://history/{id}",
+        "description": "Access calculation history by ID"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "explain-calculation",
+        "description": "Generate educational explanations for calculations"
+      },
+      {
+        "name": "generate-problems",
+        "description": "Create math problems for practice"
+      },
+      {
+        "name": "calculator-tutor",
+        "description": "Act as a math tutor using calculator capabilities"
+      }
+    ]
+  },
+  "runtime": {
+    "node": ">=18.0.0"
+  }
+}
