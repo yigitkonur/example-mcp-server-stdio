@@ -11,7 +11,7 @@
 
 ## 🎯 Overview
 
-This repository demonstrates a **learning-edition MCP calculator server using STDIO transport**. It is a reference implementation for the classic local pipe transport, where the server runs as a child process and communicates with a parent process via `stdin` and `stdout` using newline-delimited JSON-RPC messages.
+This repository demonstrates a **learning-edition MCP calculator server using STDIO transport**. It showcases the Model Context Protocol (MCP) SDK implementation with standard `tools/list` and `tools/call` methods, communicating via `stdin` and `stdout` using JSON-RPC messages.
 
 This transport is the most performant and secure option for local inter-process communication (IPC).
 
@@ -52,19 +52,14 @@ sequenceDiagram
     Note over Client,Server: Communication is full-duplex, concurrent, and newline-delimited.
 ```
 
-### Dual Server Implementations for Learning
+### MCP SDK Implementation
 
-This repository contains two distinct server implementations to illustrate different levels of abstraction:
+This repository contains a single, production-ready MCP server implementation:
 
-1.  **High-Level (SDK-based): `dist/server.js`**
-    -   Built using the official `@modelcontextprotocol/sdk`.
-    -   Uses high-level abstractions like `server.registerTool()` and `server.registerResource()`.
-    -   Represents the standard, recommended approach for building MCP servers.
-
-2.  **Low-Level (Manual): `dist/server-stdio.js`**
-    -   A from-scratch implementation of the newline-delimited JSON-RPC protocol.
-    -   Manually parses `stdin`, handles message framing, and constructs JSON-RPC responses.
-    -   Excellent for learning the fundamental mechanics of the MCP transport protocol itself.
+-   **`dist/server.js`** - Built with the official `@modelcontextprotocol/sdk`
+-   Uses standard MCP methods: `tools/list`, `tools/call`, `resources/list`, `prompts/list`
+-   High-level abstractions with `server.registerTool()` and `server.registerResource()`
+-   Compatible with all MCP clients and registries (including Smithery)
 
 ## ✨ Feature Compliance
 
@@ -113,13 +108,13 @@ npm run build
 The server is designed to be spawned by a client. You can run it directly to send it commands interactively.
 
 ```bash
-# Run the low-level (manual) server implementation
+# Run the MCP server
 npm start
 
-# Run the high-level (SDK) server implementation
+# Run directly with Node.js
 node dist/server.js --stdio
 
-# Run in development mode (rebuilds on changes)
+# Run in development mode
 npm run dev
 ```
 
@@ -133,30 +128,21 @@ npx @modelcontextprotocol/inspector --cli "node dist/server.js --stdio"
 
 ## 📋 API Usage Examples
 
-All requests must be a single JSON object terminated by a newline character (`\n`).
+All requests use standard MCP protocol with JSON-RPC messages.
 
-### High-Level (SDK) Server (`dist/server.js`)
+### Standard MCP Protocol
 
-The SDK uses a structured `tools/call` method.
-
-```bash
-# Request (as a single line)
-→ {"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"calculate","arguments":{"a":7,"b":6,"op":"multiply"}}}
-
-# Response
-{"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"7 × 6 = 42"}]}}
-```
-
-### Low-Level (Manual) Server (`dist/server-stdio.js`)
-
-This implementation uses direct method names, bypassing the `tools/call` wrapper.
+The server implements the standard MCP SDK protocol:
 
 ```bash
-# Request (as a single line)
-→ {"jsonrpc":"2.0","id":1,"method":"calculate","params":{"a":7,"b":6,"op":"multiply"}}
+# List available tools
+→ {"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
+
+# Call a tool
+→ {"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"calculate","arguments":{"a":7,"b":6,"op":"multiply"}}}
 
 # Response
-{"jsonrpc":"2.0","id":1,"result":{"value":42,"meta":{"calculationId":"...","timestamp":"..."}}}
+{"jsonrpc":"2.0","id":2,"result":{"content":[{"type":"text","text":"7 × 6 = 42"}]}}
 ```
 
 ### Progress Demonstration

@@ -23,6 +23,6 @@ startCommand:
   commandFunction: |
     (cfg) => ({
       command: 'node',
-      args: ['dist/mcp-server.js'],
+      args: ['dist/server.js', '--stdio'],
       env: {}
     })

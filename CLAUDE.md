@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This repository implements a **learning-edition MCP calculator server using STDIO transport**. It demonstrates the Model Context Protocol (MCP) with newline-delimited JSON-RPC communication over stdin/stdout, showcasing both modern MCP SDK usage and custom JSON-RPC implementation patterns.
+This repository implements a **learning-edition MCP calculator server using STDIO transport**. It demonstrates the Model Context Protocol (MCP) with standard JSON-RPC communication over stdin/stdout using the official MCP SDK.
 
 ## Development Commands
 
 ### Core Development
 - `npm install` - Install dependencies 
-- `npm start` - Run the production STDIO server (`dist/server-stdio.js`)
+- `npm start` - Run the MCP server (`dist/server.js --stdio`)
 - `npm run dev` - Development mode with auto-reload
 - `npm run build` - Build TypeScript to JavaScript (may fail due to legacy API usage)
 - `npm run clean` - Remove dist directory
@@ -24,24 +24,22 @@ This repository implements a **learning-edition MCP calculator server using STDI
 - `npm run typecheck` - TypeScript type checking
 
 ### MCP Inspection
-- `npx @modelcontextprotocol/inspector --cli node dist/mcp-server.js --method tools/list` - List all 7 tools with schemas  
-- `npx @modelcontextprotocol/inspector --cli node dist/mcp-server.js --method prompts/list` - List all 3 prompts
-- `npx @modelcontextprotocol/inspector --cli node dist/mcp-server.js --method resources/list` - List all 4 resources
-- `npx @modelcontextprotocol/inspector --cli node dist/mcp-server.js --method resources/read --uri "calculator://constants"` - Read specific resource
+- `npx @modelcontextprotocol/inspector --cli "node dist/server.js --stdio" --method tools/list` - List all 7 tools with schemas  
+- `npx @modelcontextprotocol/inspector --cli "node dist/server.js --stdio" --method prompts/list` - List all 3 prompts
+- `npx @modelcontextprotocol/inspector --cli "node dist/server.js --stdio" --method resources/list` - List all 4 resources
+- `npx @modelcontextprotocol/inspector --cli "node dist/server.js --stdio" --method resources/read --uri "calculator://constants"` - Read specific resource
 
 ### Manual Testing
-- `echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"calculate","arguments":{"a":7,"b":6,"op":"multiply"}}}' | node dist/mcp-server.js` - Test MCP SDK server
-- `echo '{"jsonrpc":"2.0","id":1,"method":"calculate","params":{"a":7,"b":6,"op":"multiply"}}' | node dist/server-stdio.js` - Test custom JSON-RPC server
+- `echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"calculate","arguments":{"a":7,"b":6,"op":"multiply"}}}' | node dist/server.js --stdio` - Test MCP SDK server
 
 ## Architecture
 
-### Dual Server Implementation
-The project provides **two functional server implementations**:
+### MCP SDK Implementation
+The project provides a **single, production-ready MCP server implementation**:
 
-1. **`dist/mcp-server.js`** - Modern MCP SDK server using `registerTool()`, `registerResource()`, `registerPrompt()` APIs
-2. **`dist/server-stdio.js`** - Custom newline-delimited JSON-RPC server with manual message handling
-
-Both servers implement the same 7 tools, 3 prompts, and 4 resources but use different communication protocols.
+- **`dist/server.js`** - MCP SDK server using standard `registerTool()`, `registerResource()`, `registerPrompt()` APIs
+- Implements standard MCP protocol with `tools/list`, `tools/call`, `resources/list`, `prompts/list` methods
+- Compatible with all MCP clients and registries including Smithery
 
 ### MCP Golden Standard Features
 - **7 Tools**: `calculate`, `batch_calculate`, `advanced_calculate`, `demo_progress`, `solve_math_problem`, `explain_formula`, `calculator_assistant`
@@ -77,13 +75,7 @@ The test suite focuses on STDIO transport validation:
 
 ## Message Protocol Specifics
 
-### STDIO JSON-RPC Format
-```
-→ {"jsonrpc":"2.0","id":1,"method":"calculate","params":{"a":5,"b":3,"op":"add"}}
-{"jsonrpc":"2.0","id":1,"result":{"value":8,"meta":{"calculationId":"abc123","timestamp":"2024-..."}}}
-```
-
-### MCP SDK Format  
+### Standard MCP Protocol Format
 ```
 → {"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"calculate","arguments":{"a":5,"b":3,"op":"add"}}}
 {"result":{"content":[{"type":"text","text":"5 + 3 = 8"}]},"jsonrpc":"2.0","id":1}
@@ -91,9 +83,8 @@ The test suite focuses on STDIO transport validation:
 
 ## Key Implementation Files
 
-- **`dist/mcp-server.js`** - Modern MCP SDK server (669 lines, production-ready)
-- **`dist/server-stdio.js`** - Custom JSON-RPC server (504 lines, reference implementation)
+- **`dist/server.js`** - MCP SDK server (production-ready)
 - **`src/tests/stdio-transport.test.ts`** - Integration tests for STDIO protocol
 - **`mcp-demo-manifest.json`** - Feature matrix documentation
 
-When working with this codebase, prioritize the working `dist/` JavaScript files over the TypeScript source files.
+The server is built with the MCP SDK and uses standard protocol methods for maximum compatibility.
