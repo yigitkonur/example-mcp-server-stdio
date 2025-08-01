@@ -68,7 +68,7 @@ This repository contains two distinct server implementations to illustrate diffe
 
 ## ✨ Feature Compliance
 
-This server implements the complete MCP Golden Standard feature set for the learning edition.
+This server implements the complete MCP Latest Standard feature set for the learning edition.
 
 | Name | Status | Implementation |
 |:------|:--------|:----------------|
@@ -212,18 +212,8 @@ npm run test:coverage
 npm run test:watch
 ```
 
-## 📚 Project Resources
+## 📚 Official Resources
 
 *   [MCP Specification](https://spec.modelcontextprotocol.io)
 *   [Model Context Protocol Documentation](https://modelcontextprotocol.io)
 *   [STDIO Transport Documentation](https://spec.modelcontextprotocol.io/specification/basic/transports/#stdio)
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
----
-
-<p align="center">
-  ✅ <strong>Fully Compliant with MCP Learning Edition Golden Standard</strong>
-</p>
