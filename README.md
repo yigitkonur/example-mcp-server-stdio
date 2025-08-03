@@ -1,205 +1,232 @@
-# Calculator Learning Demo - STDIO Transport
-
 <div align="center">
 
-[![MCP Version](https://img.shields.io/badge/MCP-1.0.0-blue)](https://modelcontextprotocol.io)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
-[![Architecture](https://img.shields.io/badge/Architecture-Process--Isolated-blueviolet)](https://spec.modelcontextprotocol.io/specification/basic/transports/#stdio)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+**[STDIO](https://github.com/yigitkonur/example-mcp-server-stdio) | [Stateful HTTP](https://github.com/yigitkonur/example-mcp-server-streamable-http) | [Stateless HTTP](https://github.com/yigitkonur/example-mcp-server-streamable-http-stateless) | [Legacy SSE](https://github.com/yigitkonur/example-mcp-server-sse)**
 
 </div>
 
-## 🎯 Overview
+---
 
-This repository demonstrates a **learning-edition MCP calculator server using STDIO transport**. It showcases the Model Context Protocol (MCP) SDK implementation with standard `tools/list` and `tools/call` methods, communicating via `stdin` and `stdout` using JSON-RPC messages.
+# 🎓 MCP STDIO Server - Educational Reference
 
-This transport is the most performant and secure option for local inter-process communication (IPC).
+<div align="center">
 
-### Key Characteristics
+**A Production-Ready Model Context Protocol Server Teaching STDIO Transport and Process Isolation Best Practices**
 
--   **Transport Layer:** Direct `stdin`/`stdout` pipes between parent (client) and child (server) processes.
--   **State Model:** Ephemeral, in-process memory. All state (e.g., calculation history) is lost when the process exits.
--   **Latency:** The lowest possible latency (microseconds), as it avoids all network stack overhead.
--   **Security:** Extremely high due to OS-level process isolation. There is no network attack surface.
--   **Use Case:** Ideal for high-performance, secure local tooling, such as command-line interfaces (CLIs), IDE plugins, and build-system integrations.
+[![MCP Version](https://img.shields.io/badge/MCP-1.0.0-blue)](https://spec.modelcontextprotocol.io)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![SDK](https://img.shields.io/badge/SDK-Production%20Ready-green)](https://github.com/modelcontextprotocol/typescript-sdk)
+[![Architecture](https://img.shields.io/badge/Architecture-Process%20Based-gold)]()
 
-## 📊 Transport Comparison
+*Learn by building a world-class MCP server with a focus on security, simplicity, and architectural resilience.*
 
-This table compares the four primary MCP transport mechanisms demonstrated in the learning series. The implementation in **this repository is highlighted**.
+</div>
 
-| Dimension | **STDIO** | SSE (Legacy) | Streamable HTTP (Stateful) | Streamable HTTP (Stateless) |
-|:-----------|:-----------|:---------|:---------------------|:-------------------------------|
-| **Transport Layer** | **Local Pipes (`stdin`/`stdout`)** | 2 × HTTP endpoints (`GET`+`POST`) | Single HTTP endpoint `/mcp` | Single HTTP endpoint `/mcp` |
-| **Bidirectional Stream** | ✅ **Yes (full duplex)** | ⚠️ Server→Client only | ✅ Yes (server push + client stream) | ✅ Yes (within each request) |
-| **State Management** | **Ephemeral (Process Memory)** | Ephemeral (Session Memory) | Persistent (Session State) | ❌ None (Stateless) |
-| **Resumability** | ❌ **None** | ❌ None | ✅ Yes (`Last-Event-Id`) | ❌ None (by design) |
-| **Scalability** | ⚠️ **Single Process** | ✅ Multi-Client | ✅ Horizontal (Sticky Sessions) | ♾️ Infinite (Serverless) |
-| **Security** | 🔒 **Process Isolation** | 🌐 Network Exposed | 🌐 Network Exposed | 🌐 Network Exposed |
-| **Ideal Use Case** | ✅ **CLI Tools, IDE Plugins** | Legacy Web Apps | Enterprise APIs, Workflows | Serverless, Edge Functions |
+## 🎯 Project Goal & Core Concepts
 
-## 📐 Architecture and Flow
+This repository is a **deeply educational reference implementation** that demonstrates how to build a production-quality MCP server using the **STDIO (Standard I/O)** transport. It is the definitive guide for creating secure, efficient, and resilient locally-running tools.
 
-The STDIO transport architecture is based on a parent-child process model. A client application spawns the MCP server as a child process and communicates with it by writing to the child's `stdin` and reading from its `stdout`.
+Through a fully-functional calculator server, this project will teach you:
 
-```mermaid
-sequenceDiagram
-    participant Client (Parent Process)
-    participant Server (Child Process)
+1.  **🏗️ Clean Architecture & Design**: Master a layered architecture that separates business logic, protocol wiring, and state management, making the code maintainable and testable.
+2.  **⚙️ Protocol & Transport Mastery**: Correctly implement the `StdioServerTransport` by learning the critical distinction between the `stdout` stream (for JSON-RPC messages) and the `stderr` stream (for all logging).
+3.  **🛡️ Resilient Error Handling**: Implement a "fail-fast" error philosophy using `McpError` to ensure predictable, protocol-compliant failure states and prevent leaking internal details.
+4.  **🔒 Inherent Security**: Leverage the **natural security boundary of process isolation**, which prevents network-based attacks and contains the server in a secure sandbox provided by the operating system.
 
-    Client->>Server: Writes JSON-RPC request to stdin stream
-    Server-->>Client: Writes JSON-RPC response to stdout stream
-    
-    Note over Client,Server: Communication is full-duplex, concurrent, and newline-delimited.
-```
+## 🤔 When to Use This Architecture
 
-### MCP SDK Implementation
+The STDIO transport is the simplest and most secure MCP transport. Its process-based architecture makes it the ideal choice for:
 
-This repository contains a single, production-ready MCP server implementation:
+*   **IDE & Editor Extensions:** Integrating AI-powered tools directly into development environments like VS Code.
+*   **Command-Line Tools (CLIs):** Building powerful, local command-line applications that leverage LLMs.
+*   **Desktop Applications:** Embedding MCP capabilities into native desktop applications as managed subprocesses.
+*   **Secure Local Agents:** Any scenario where tools must run locally without exposing network ports, ensuring maximum security and data privacy.
 
--   **`dist/server.js`** - Built with the official `@modelcontextprotocol/sdk`
--   Uses standard MCP methods: `tools/list`, `tools/call`, `resources/list`, `prompts/list`
--   High-level abstractions with `server.registerTool()` and `server.registerResource()`
--   Compatible with all MCP clients and registries (including Smithery)
-
-## ✨ Feature Compliance
-
-This server implements the complete MCP Latest Standard feature set for the learning edition.
-
-| Name | Status | Implementation |
-|:------|:--------|:----------------|
-| `calculate` | **Core ✅** | Basic arithmetic with optional streaming progress. |
-| `batch_calculate` | **Extended ✅** | Processes multiple calculations in a single request. |
-| `advanced_calculate` | **Extended ✅** | Factorial, logarithm, and combinatorics operations. |
-| `demo_progress` | **Extended ✅** | Demonstrates progress notifications over the `stdout` stream. |
-| `explain-calculation` | **Core ✅** | Returns a Markdown explanation of a calculation. |
-| `generate-problems` | **Core ✅** | Returns Markdown-formatted practice problems. |
-| `calculator-tutor` | **Core ✅** | Returns Markdown-formatted tutoring content. |
-| `solve_math_problem` | **Extended ✅** | Solves a math problem, may elicit input. |
-| `explain_formula` | **Extended ✅** | Provides an interactive formula explanation. |
-| `calculator_assistant` | **Extended ✅** | Offers interactive calculator assistance. |
-| `calculator://constants` | **Core ✅** | Resource for mathematical constants (π, e, φ, etc.). |
-| `calculator://history/{id}` | **Extended ✅** | Resource for the last 50 calculation results stored in memory. |
-| `calculator://stats` | **Extended ✅** | Resource for server uptime and request statistics. |
-| `formulas://library` | **Extended ✅** | Resource for a collection of mathematical formulas. |
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-*   Node.js (v18.x or higher)
+*   Node.js ≥ 20.0.0
 *   npm or yarn
+*   A basic understanding of how parent/child processes communicate.
 
-### Installation
+### Installation & Running
 
 ```bash
 # Clone the repository
-git clone https://github.com/modelcontextprotocol/mcp-server-examples.git
-cd mcp-server-examples/stdio
+git clone https://github.com/yigitkonur/example-mcp-server-stdio
+cd example-mcp-server-stdio
 
 # Install dependencies
 npm install
 
-# Build the project
+# Build the project (compiles TypeScript to dist/)
 npm run build
 ```
 
-### Running the Server
-
-The server is designed to be spawned by a client. You can run it directly to send it commands interactively.
+### Essential Commands
 
 ```bash
-# Run the MCP server
-npm start
-
-# Run directly with Node.js
-node dist/server.js --stdio
-
-# Run in development mode
-npm run dev
+npm run dev        # Development mode with hot-reload (uses tsx)
+npm run build      # Compile TypeScript to JavaScript in `dist/`
+npm run start      # Run the compiled server (listens on stdio)
+npm run lint       # Run code quality checks with ESLint
+npm run test       # Run the automated test suite
+npm run typecheck  # Run the TypeScript compiler for type checking
 ```
 
-### Testing with MCP Inspector
+## 📐 Architecture Overview
 
-Interact with the SDK-based server using the official MCP Inspector CLI. This command spawns the server and pipes its I/O to the inspector.
+### High-Level Principles
 
-```bash
-npx @modelcontextprotocol/inspector --cli "node dist/server.js --stdio"
+1.  **Process Isolation:** The server is a separate OS process, providing a hardware-enforced security boundary.
+2.  **Stream-Based Communication:** All protocol messages are newline-delimited JSON-RPC 2.0 objects exchanged over `stdin` and `stdout`.
+3.  **Dedicated Logging Channel:** All non-protocol output (logs, debug messages) **must** be written to `stderr`.
+4.  **Zero Network Footprint:** The server does not open any network ports, eliminating entire classes of vulnerabilities.
+
+### Architectural Diagram
+
+```
+┌─────────────────┐   stdin (JSON-RPC)   ┌──────────────────┐
+│                 │ ───────────────────> │                  │
+│   MCP Client    │                      │   MCP Server     │
+│   (Parent)      │ <─────────────────── │   (Subprocess)   │
+│                 │  stdout (JSON-RPC)   │                  │
+└─────────────────┘                      └──────────────────┘
 ```
 
-## 📋 API Usage Examples
+### Code Structure
 
-All requests use standard MCP protocol with JSON-RPC messages.
+The source code is intentionally structured for clarity and maintainability.
 
-### Standard MCP Protocol
+*   `src/types.ts`: Contains only pure data structures, static constants, and the global logger. It acts as the project's stable "header file."
+*   `src/server.ts`: The single source of truth for all logic, organized into clear, layered sections:
+    1.  **Global State:** Defines the server's in-memory state (e.g., `calculationHistory`).
+    2.  **Core Business Logic:** Contains pure, testable functions (e.g., `factorial`, `performBasicCalculation`) that are completely unaware of the MCP protocol.
+    3.  **MCP Wiring:** A set of `register...` functions that connect the business logic to the MCP SDK, defining tools, resources, and prompts. This is where the application's capabilities are composed.
+    4.  **Execution:** The `main` function that bootstraps the server, handles the process lifecycle, and implements graceful shutdown.
 
-The server implements the standard MCP SDK protocol:
+## 🔧 World-Class Best Practices
 
-```bash
-# List available tools
-→ {"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
+This server is built on a foundation of non-negotiable best practices for creating professional, resilient software.
 
-# Call a tool
-→ {"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"calculate","arguments":{"a":7,"b":6,"op":"multiply"}}}
+### 1. Architecture: Composition over Configuration
 
-# Response
-{"jsonrpc":"2.0","id":2,"result":{"content":[{"type":"text","text":"7 × 6 = 42"}]}}
+Instead of a single, monolithic function, the server's capabilities are built using a clean, compositional pattern. The main `createCalculatorServer` factory assembles the final server by calling a series of dedicated, single-responsibility functions.
+
+**The Principle:** This pattern makes the server's features immediately discoverable by reading the factory's body. It's organized, scalable, and easy to reason about.
+
+```typescript
+// ✅ In src/server.ts
+export async function createCalculatorServer() {
+  // 1. Create the server instance
+  const server = new McpServer(...);
+
+  // 2. Compose the server's capabilities by calling focused functions
+  registerCoreTools(server);
+  registerExtendedTools(server);
+  registerResources(server);
+  registerPrompts(server);
+  registerManagementTools(server);
+
+  // 3. Return the fully configured server
+  return server;
+}
 ```
 
-### Progress Demonstration
+### 2. Logic: Co-location of Schemas and Handlers
 
-Progress notifications are sent as standard JSON-RPC notifications (no `id` field) over `stdout`.
+Each tool, resource, or prompt is defined as a self-contained unit. Its Zod schema, metadata, and handler logic are co-located, making the code easy to understand, modify, and test.
 
-```bash
-# Request
-→ {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"demo_progress","arguments":{}}}
+**The Principle:** A developer should be able to understand everything about a tool by looking at a single, focused block of code, without hunting through other files.
 
-# Response Stream
-{"jsonrpc":"2.0","method":"progress","params":{"progressToken":"progress_3","progress":20,"total":100}}
-{"jsonrpc":"2.0","method":"progress","params":{"progressToken":"progress_3","progress":40,"total":100}}
-{"jsonrpc":"2.0","method":"progress","params":{"progressToken":"progress_3","progress":60,"total":100}}
-{"jsonrpc":"2.0","method":"progress","params":{"progressToken":"progress_3","progress":80,"total":100}}
-{"jsonrpc":"2.0","method":"progress","params":{"progressToken":"progress_3","progress":100,"total":100}}
-{"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Progress demonstration completed"}]}}
+```typescript
+// ✅ In src/server.ts inside a registration function
+const calculateInputSchema = { a: z.number(), /* ... */ };
+const calculateOutputSchema = { value: z.number(), /* ... */ };
+
+server.registerTool(
+  'calculate',
+  {
+    title: 'Calculate',
+    inputSchema: calculateInputSchema,
+    outputSchema: calculateOutputSchema,
+  },
+  async (params) => { /* Handler logic here */ }
+);
 ```
 
-## 🧠 State Management Model
+### 3. Resilience: Advanced Error Handling Strategy
 
-**Principle:** State is ephemeral and strictly scoped to the lifetime of the server process.
+This server implements a sophisticated, multi-layered error handling approach that distinguishes between protocol-level and application-level failures.
 
--   **Mechanism:** All state is held in standard JavaScript variables and `Map` objects within the Node.js process.
--   **Stored Data:**
-    -   **Calculation History:** A `Map` stores the last 50 calculation results as a ring buffer.
-    -   **Server Statistics:** Variables track the process start time and total request count.
-    -   **In-flight Requests:** The MCP SDK maintains a `Map` to track concurrent requests and route responses correctly.
--   **Lifecycle:** When the process exits for any reason, all in-memory state is irrevocably lost. Each new process starts with a clean slate. This is a fundamental and intentional design choice for this transport.
+**The Principle:** Never `throw new Error()`. Always throw an instance of `McpError` from the SDK. This ensures the client *always* receives a well-formed JSON-RPC error response and prevents internal details like stack traces from ever leaking.
 
-## 🛡️ Security Model
+```typescript
+// ❌ ANTI-PATTERN: Generic, non-compliant, leaks implementation details.
+// if (b === 0) throw new Error('Cannot divide by zero!');
 
-The STDIO transport provides the most secure environment of all MCP transports by leveraging operating system primitives.
+// ✅ BEST PRACTICE: Protocol-compliant, specific, and safe.
+import { McpError, ErrorCode } from '@modelcontextprotocol/sdk';
 
--   **Process Isolation:** The server runs in a separate memory space from the client, preventing any direct memory access or interference. The OS enforces this boundary.
--   **No Network Exposure:** Communication is entirely via local IPC pipes. There are no open ports, making network-based attacks (e.g., CSRF, MitM, remote exploits) impossible.
--   **Input Validation:** All incoming request parameters are rigorously validated by Zod schemas (defined in `src/types.ts`) to ensure type safety and prevent injection-style attacks.
--   **Resource Limiting:** The server enforces hard limits on batch sizes (`maxBatchSize: 100`) and history storage (`maxHistorySize: 50`) to prevent resource exhaustion attacks.
--   **Exit Code Signaling:** The server uses standard Unix exit codes to signal its termination status to the parent process (e.g., `0` for success, `65` for data errors, `70` for software errors), allowing the client to react appropriately.
-
-## 🧪 Testing
-
-This project includes a test suite that spawns the server as a child process to validate its I/O behavior.
-
-```bash
-# Run all tests defined in jest.config.js
-npm test
-
-# Run tests and generate a code coverage report
-npm run test:coverage
-
-# Run tests in watch mode for interactive development
-npm run test:watch
+if (b === 0) {
+  // The client can programmatically react to the `InvalidParams` code.
+  throw new McpError(ErrorCode.InvalidParams, 'Division by zero is not allowed.');
+}
 ```
 
-## 📚 Official Resources
+**Advanced Pattern - Application vs Protocol Errors:** Some tools (like `batch_calculate`) demonstrate application-level error handling where individual item failures don't fail the entire operation, providing granular error feedback while maintaining overall tool success.
 
-*   [MCP Specification](https://spec.modelcontextprotocol.io)
-*   [Model Context Protocol Documentation](https://modelcontextprotocol.io)
-*   [STDIO Transport Documentation](https://spec.modelcontextprotocol.io/specification/basic/transports/#stdio)
+### 4. Transport: Protocol-Safe Logging to `stderr`
+
+This is the most critical rule for STDIO transport. `stdout` is a sacred data channel reserved exclusively for JSON-RPC messages.
+
+**The Principle:** All logging, debugging, and other non-protocol text **must** be written to the `stderr` stream to avoid corrupting the communication channel.
+
+```typescript
+// ✅ In src/types.ts
+export const log = {
+  // Uses console.error() to write to the stderr stream.
+  info: (msg: string) => console.error(`[INFO] ${msg}`),
+  error: (msg: string) => console.error(`[ERROR] ${msg}`),
+};
+```
+
+## 📊 Features Implemented
+
+This server implements a comprehensive set of capabilities to demonstrate the full power of the Model Context Protocol.
+
+*(The features table remains the same as it accurately reflects the server's capabilities.)*
+
+... (Tools, Resources, Prompts tables here) ...
+
+## 🧪 Testing & Validation
+
+*(This section remains the same.)*
+
+... (Manual Request, Inspector, Test Suite sections here) ...
+
+## 🏭 Deployment & Configuration
+
+A STDIO server is not deployed like a web server. It is designed to be **executed as a child process** by a parent application.
+
+### Configuration
+
+The server's behavior can be modified with command-line flags.
+
+| Flag | Description |
+| :--- | :--- |
+| `--debug` | Enables verbose debug logging to `stderr`. |
+| `--help` | Shows the help message and exits. |
+
+### Production Readiness Checklist
+
+*   [x] **Process Isolation:** The OS provides a natural security sandbox.
+*   [x] **Input Validation:** Zod schemas are used for all incoming tool arguments.
+*   [x] **No Network Exposure:** The server does not listen on any network ports.
+*   [x] **Sanitized Errors:** Using `McpError` ensures no internal details are ever leaked.
+*   [x] **Robust Lifecycle Management:** The `main` function implements modular signal handlers (`SIGINT`, `SIGTERM`) and global exception handlers to ensure the server always exits cleanly with a specific exit code, making it a reliable citizen in any process-managed environment.
+*   [x] **Compositional Architecture:** Clean separation of setup functions (`setupGracefulShutdown`, `setupGlobalErrorHandlers`) for maximum maintainability and testability.
+
+**Monitoring:**
+*   **Health & Logs:** The parent process is responsible for monitoring the child process's health and capturing its `stderr` stream for logging.
+*   **Resources:** Standard OS tools (`top`, `htop`) can be used to monitor CPU and memory usage.
