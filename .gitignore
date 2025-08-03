@@ -73,4 +73,4 @@ playwright-report/
 # pnpm-lock.yaml
 
 # Docker
-.dockerignore.DS_Store
+.dockerignore
