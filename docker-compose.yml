@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    
+
     # Give the built image a friendly name for easier management
     image: mcp/calculator-stdio-server:latest
 
@@ -15,8 +15,8 @@ services:
     # These two lines are the equivalent of 'docker run -it'.
     # They are essential for your MCP client to connect to the server's
     # standard input and output streams.
-    stdin_open: true  # Keeps stdin open (-i)
-    tty: true         # Allocates a pseudo-TTY (-t)
+    stdin_open: true # Keeps stdin open (-i)
+    tty: true # Allocates a pseudo-TTY (-t)
 
     # Give the running container a predictable name
     container_name: mcp_calculator_server

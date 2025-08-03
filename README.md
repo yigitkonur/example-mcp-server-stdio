@@ -1,6 +1,6 @@
 <div align="center">
 
-**[STDIO](https://github.com/yigitkonur/example-mcp-server-stdio) | [Stateful HTTP](https://github.com/yigitkonur/example-mcp-server-streamable-http) | [Stateless HTTP](https://github.com/yigitkonur/example-mcp-server-streamable-http-stateless) | [Legacy SSE](https://github.com/yigitkonur/example-mcp-server-sse)**
+**[STDIO](https://github.com/yigitkonur/example-mcp-server-stdio) | [Stateful HTTP](https://github.com/yigitkonur/example-mcp-server-streamable-http) | [Stateless HTTP](https://github.com/yigitkonur/example-mcp-server-streamable-http-stateless) | [SSE](https://github.com/yigitkonur/example-mcp-server-sse)**
 
 </div>
 
@@ -12,12 +12,12 @@
 
 **A Production-Ready Model Context Protocol Server Teaching STDIO Transport and Process Isolation Best Practices**
 
-[![MCP Version](https://img.shields.io/badge/MCP-1.0.0-blue)](https://spec.modelcontextprotocol.io)
+[![MCP Version](https://img.shields.io/badge/MCP-1.0.0-blue)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
 [![SDK](https://img.shields.io/badge/SDK-Production%20Ready-green)](https://github.com/modelcontextprotocol/typescript-sdk)
 [![Architecture](https://img.shields.io/badge/Architecture-Process%20Based-gold)]()
 
-*Learn by building a world-class MCP server with a focus on security, simplicity, and architectural resilience.*
+_Learn by building a world-class MCP server with a focus on security, simplicity, and architectural resilience._
 
 </div>
 
@@ -36,18 +36,18 @@ Through a fully-functional calculator server, this project will teach you:
 
 The STDIO transport is the simplest and most secure MCP transport. Its process-based architecture makes it the ideal choice for:
 
-*   **IDE & Editor Extensions:** Integrating AI-powered tools directly into development environments like VS Code.
-*   **Command-Line Tools (CLIs):** Building powerful, local command-line applications that leverage LLMs.
-*   **Desktop Applications:** Embedding MCP capabilities into native desktop applications as managed subprocesses.
-*   **Secure Local Agents:** Any scenario where tools must run locally without exposing network ports, ensuring maximum security and data privacy.
+- **IDE & Editor Extensions:** Integrating AI-powered tools directly into development environments like VS Code.
+- **Command-Line Tools (CLIs):** Building powerful, local command-line applications that leverage LLMs.
+- **Desktop Applications:** Embedding MCP capabilities into native desktop applications as managed subprocesses.
+- **Secure Local Agents:** Any scenario where tools must run locally without exposing network ports, ensuring maximum security and data privacy.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-*   Node.js ≥ 20.0.0
-*   npm or yarn
-*   A basic understanding of how parent/child processes communicate.
+- Node.js ≥ 20.0.0
+- npm or yarn
+- A basic understanding of how parent/child processes communicate.
 
 ### Installation & Running
 
@@ -70,8 +70,9 @@ npm run dev        # Development mode with hot-reload (uses tsx)
 npm run build      # Compile TypeScript to JavaScript in `dist/`
 npm run start      # Run the compiled server (listens on stdio)
 npm run lint       # Run code quality checks with ESLint
-npm run test       # Run the automated test suite
 npm run typecheck  # Run the TypeScript compiler for type checking
+npm run pipeline   # Full build pipeline with zero-warning enforcement
+npm run all        # Complete pipeline + smoke test verification
 ```
 
 ## 📐 Architecture Overview
@@ -98,12 +99,12 @@ npm run typecheck  # Run the TypeScript compiler for type checking
 
 The source code is intentionally structured for clarity and maintainability.
 
-*   `src/types.ts`: Contains only pure data structures, static constants, and the global logger. It acts as the project's stable "header file."
-*   `src/server.ts`: The single source of truth for all logic, organized into clear, layered sections:
-    1.  **Global State:** Defines the server's in-memory state (e.g., `calculationHistory`).
-    2.  **Core Business Logic:** Contains pure, testable functions (e.g., `factorial`, `performBasicCalculation`) that are completely unaware of the MCP protocol.
-    3.  **MCP Wiring:** A set of `register...` functions that connect the business logic to the MCP SDK, defining tools, resources, and prompts. This is where the application's capabilities are composed.
-    4.  **Execution:** The `main` function that bootstraps the server, handles the process lifecycle, and implements graceful shutdown.
+- `src/types.ts`: Contains only pure data structures, static constants, and the global logger. It acts as the project's stable "header file."
+- `src/server.ts`: The single source of truth for all logic, organized into clear, layered sections:
+  1.  **Global State:** Defines the server's in-memory state (e.g., `calculationHistory`).
+  2.  **Core Business Logic:** Contains pure, testable functions (e.g., `factorial`, `performBasicCalculation`) that are completely unaware of the MCP protocol.
+  3.  **MCP Wiring:** A set of `register...` functions that connect the business logic to the MCP SDK, defining tools, resources, and prompts. This is where the application's capabilities are composed.
+  4.  **Execution:** The `main` function that bootstraps the server, handles the process lifecycle, and implements graceful shutdown.
 
 ## 🔧 World-Class Best Practices
 
@@ -141,8 +142,8 @@ Each tool, resource, or prompt is defined as a self-contained unit. Its Zod sche
 
 ```typescript
 // ✅ In src/server.ts inside a registration function
-const calculateInputSchema = { a: z.number(), /* ... */ };
-const calculateOutputSchema = { value: z.number(), /* ... */ };
+const calculateInputSchema = { a: z.number() /* ... */ };
+const calculateOutputSchema = { value: z.number() /* ... */ };
 
 server.registerTool(
   'calculate',
@@ -151,7 +152,9 @@ server.registerTool(
     inputSchema: calculateInputSchema,
     outputSchema: calculateOutputSchema,
   },
-  async (params) => { /* Handler logic here */ }
+  async (params) => {
+    /* Handler logic here */
+  },
 );
 ```
 
@@ -159,7 +162,7 @@ server.registerTool(
 
 This server implements a sophisticated, multi-layered error handling approach that distinguishes between protocol-level and application-level failures.
 
-**The Principle:** Never `throw new Error()`. Always throw an instance of `McpError` from the SDK. This ensures the client *always* receives a well-formed JSON-RPC error response and prevents internal details like stack traces from ever leaking.
+**The Principle:** Never `throw new Error()`. Always throw an instance of `McpError` from the SDK. This ensures the client _always_ receives a well-formed JSON-RPC error response and prevents internal details like stack traces from ever leaking.
 
 ```typescript
 // ❌ ANTI-PATTERN: Generic, non-compliant, leaks implementation details.
@@ -195,13 +198,13 @@ export const log = {
 
 This server implements a comprehensive set of capabilities to demonstrate the full power of the Model Context Protocol.
 
-*(The features table remains the same as it accurately reflects the server's capabilities.)*
+_(The features table remains the same as it accurately reflects the server's capabilities.)_
 
 ... (Tools, Resources, Prompts tables here) ...
 
 ## 🧪 Testing & Validation
 
-*(This section remains the same.)*
+_(This section remains the same.)_
 
 ... (Manual Request, Inspector, Test Suite sections here) ...
 
@@ -213,20 +216,21 @@ A STDIO server is not deployed like a web server. It is designed to be **execute
 
 The server's behavior can be modified with command-line flags.
 
-| Flag | Description |
-| :--- | :--- |
+| Flag      | Description                                |
+| :-------- | :----------------------------------------- |
 | `--debug` | Enables verbose debug logging to `stderr`. |
-| `--help` | Shows the help message and exits. |
+| `--help`  | Shows the help message and exits.          |
 
 ### Production Readiness Checklist
 
-*   [x] **Process Isolation:** The OS provides a natural security sandbox.
-*   [x] **Input Validation:** Zod schemas are used for all incoming tool arguments.
-*   [x] **No Network Exposure:** The server does not listen on any network ports.
-*   [x] **Sanitized Errors:** Using `McpError` ensures no internal details are ever leaked.
-*   [x] **Robust Lifecycle Management:** The `main` function implements modular signal handlers (`SIGINT`, `SIGTERM`) and global exception handlers to ensure the server always exits cleanly with a specific exit code, making it a reliable citizen in any process-managed environment.
-*   [x] **Compositional Architecture:** Clean separation of setup functions (`setupGracefulShutdown`, `setupGlobalErrorHandlers`) for maximum maintainability and testability.
+- [x] **Process Isolation:** The OS provides a natural security sandbox.
+- [x] **Input Validation:** Zod schemas are used for all incoming tool arguments.
+- [x] **No Network Exposure:** The server does not listen on any network ports.
+- [x] **Sanitized Errors:** Using `McpError` ensures no internal details are ever leaked.
+- [x] **Robust Lifecycle Management:** The `main` function implements modular signal handlers (`SIGINT`, `SIGTERM`) and global exception handlers to ensure the server always exits cleanly with a specific exit code, making it a reliable citizen in any process-managed environment.
+- [x] **Compositional Architecture:** Clean separation of setup functions (`setupGracefulShutdown`, `setupGlobalErrorHandlers`) for maximum maintainability and testability.
 
 **Monitoring:**
-*   **Health & Logs:** The parent process is responsible for monitoring the child process's health and capturing its `stderr` stream for logging.
-*   **Resources:** Standard OS tools (`top`, `htop`) can be used to monitor CPU and memory usage.
+
+- **Health & Logs:** The parent process is responsible for monitoring the child process's health and capturing its `stderr` stream for logging.
+- **Resources:** Standard OS tools (`top`, `htop`) can be used to monitor CPU and memory usage.

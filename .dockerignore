@@ -1,0 +1,67 @@
+# Node modules and npm debug logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git/
+.gitignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Documentation
+*.md
+docs/
+
+# Docker files (avoid recursive builds)
+Dockerfile*
+docker-compose*.yml
+
+# Build artifacts (we'll build fresh in container)
+dist/
+build/
+
+# Development and test files
+src/tests/
+jest.config.js
+jest.setup.js
+*.test.ts
+*.spec.ts
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Log files
+logs/
+*.log
+
+# Package manager lock files (except package-lock.json which we need)
+yarn.lock
+pnpm-lock.yaml

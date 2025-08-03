@@ -24,14 +24,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 import { completable } from '@modelcontextprotocol/sdk/server/completable.js';
 import { z } from 'zod';
-import {
-  log,
-  SERVER_INFO,
-  MATH_CONSTANTS,
-  FORMULAS_LIBRARY,
-  EXIT_CODES,
-  HistoryEntry,
-} from './types.js';
+import { log, SERVER_INFO, MATH_CONSTANTS, FORMULAS_LIBRARY, EXIT_CODES } from './types.js';
+import type { HistoryEntry } from './types.js';
 
 // === SECTION: GLOBAL STATE & CONFIGURATION ===
 

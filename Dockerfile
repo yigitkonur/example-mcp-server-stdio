@@ -43,5 +43,5 @@ COPY --from=builder /app/dist ./dist
 USER node
 
 # Define the command to run the application when the container starts.
-# This will execute: node dist/server.js --stdio
-CMD ["node", "dist/server.js", "--stdio"]
+# Smithery will handle the transport protocol (STDIO) as defined in smithery.yaml
+CMD ["node", "dist/server.js"]
