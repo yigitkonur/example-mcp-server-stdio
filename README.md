@@ -221,6 +221,12 @@ The server's behavior can be modified with command-line flags.
 | `--debug` | Enables verbose debug logging to `stderr`. |
 | `--help`  | Shows the help message and exits.          |
 
+### Environment Variables
+
+| Variable           | Description                                                                                                                                                                                                                                                                             | Default |
+| :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
+| `SAMPLE_TOOL_NAME` | **(Educational)** Demonstrates dynamic tool registration via environment variables. When set, adds a simple echo tool with the specified name that takes a `value` parameter and returns `test string print: {value}`. This pattern shows how MCP servers can be configured at runtime. | None    |
+
 ### Production Readiness Checklist
 
 - [x] **Process Isolation:** The OS provides a natural security sandbox.

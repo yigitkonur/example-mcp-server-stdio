@@ -223,6 +223,34 @@ function performBasicCalculation(op: string, a: number, b: number): number {
  * @param server - The MCP server instance to register tools with
  */
 function registerCoreTools(server: McpServer): void {
+  // Check for optional SAMPLE_TOOL_NAME environment variable
+  const sampleToolName = process.env.SAMPLE_TOOL_NAME;
+  if (sampleToolName) {
+    // Register the sample tool with the name from environment variable
+    server.registerTool(
+      sampleToolName,
+      {
+        title: sampleToolName,
+        description: 'Test tool for educational purposes',
+        inputSchema: {
+          value: z.string().describe('String value to process'),
+        },
+      },
+      async ({ value }) => {
+        log.info(`Executing ${sampleToolName} with value: ${value}`);
+        const result = `test string print: ${value}`;
+        return {
+          content: [
+            {
+              type: 'text',
+              text: result,
+            },
+          ],
+        };
+      },
+    );
+  }
+
   // --- TOOL: calculate ---
   // The most fundamental tool. Demonstrates basic SDK usage.
 
